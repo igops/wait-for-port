@@ -8,9 +8,10 @@ fi
 
 if [ -z "$CHECK_FREQUENCY" ]
   then
-    CHECK_FREQUENCY=0.1
+    echo "CHECK_FREQUENCY is empty, exiting"
+    exit 1
 fi
 
 echo "Waiting for $1:$2..."
-until nc -z "$1" "$2"; do sleep $CHECK_FREQUENCY; done
+until nc -z "$1" "$2"; do sleep "$CHECK_FREQUENCY"; done
 echo "OK"
