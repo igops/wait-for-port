@@ -23,20 +23,20 @@ OK
 $ docker network create my-bridge
 $ docker run --rm -d --net my-bridge --net-alias my-mongo mongo
 $ docker run --rm --net my-bridge igops/wait-for-port my-mongo 27017
-echo "Mongo is up at this point, do some useful stuff here"
+$ echo "Mongo is up at this point, do some useful stuff here"
 ```
 
 **Waiting for some service on the docker host:**
 ```shell
 $ docker run --rm --add-host="docker-host:host-gateway" igops/wait-for-port docker-host 22
-echo "SSH server is running"
+$ echo "SSH server is running"
 ```
 
 **Waiting for another container which published some port:**
 ```shell
 $ docker run --rm -d -p 27017:27107 mongo
 $ docker run --rm --add-host="docker-host:host-gateway" igops/wait-for-port docker-host 27017
-echo "Mongo is up"
+$ echo "Mongo is up"
 ```
 
 ## ENV variables
