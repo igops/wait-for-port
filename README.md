@@ -1,5 +1,8 @@
 # This docker container will run until a given port is open
-A simple netcat-driven image which continuously tries connecting to some port on some host. Running it in the foreground allows blocking the execution of some context (e.g., deploy script), until dependent services are up.
+
+[![Docker Pulls](https://img.shields.io/docker/pulls/igops/wait-for-port?logo=docker)](https://hub.docker.com/r/igops/wait-for-port)
+
+A tiny (~3MB) netcat-driven docker image which continuously tries connecting to a specified TCP/IP endpoint. Running it in the foreground allows blocking the execution of some context (e.g., deploy script), unless dependent services are up.
 
 ## Usage
 ```shell
@@ -17,26 +20,47 @@ OK
 ```
 
 ## Real-life scenarios
-
-**Waiting for another container to response:**
+### Wait for a service on host OS to start accepting traffic
+#### Wait for nginx:
 ```shell
-$ docker network create my-bridge
-$ docker run --rm -d --net my-bridge --net-alias my-mongo mongo
-$ docker run --rm --net my-bridge igops/wait-for-port my-mongo 27017
-$ echo "Mongo is up at this point, do some useful stuff here"
+#!/bin/sh
+docker run --rm -d -p 80:80 nginx
+docker run --rm --add-host="host:host-gateway" igops/wait-for-port host 80
+curl -XGET 'http://localhost'
+```
+Output:
+```
+Waiting for host:80...OK
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+...
 ```
 
-**Waiting for some service on the docker host:**
+#### Wait for sshd:
 ```shell
-$ docker run --rm --add-host="docker-host:host-gateway" igops/wait-for-port docker-host 22
-$ echo "SSH server is running"
+#!/bin/sh
+docker run --rm --add-host="host:host-gateway" igops/wait-for-port host 22
+echo "SSH server is running"
 ```
 
-**Waiting for another container which published some port:**
+### Waiting for another container to start accepting traffic
+#### From the same docker network:
 ```shell
-$ docker run --rm -d -p 27017:27107 mongo
-$ docker run --rm --add-host="docker-host:host-gateway" igops/wait-for-port docker-host 27017
-$ echo "Mongo is up"
+#!/bin/sh
+docker network create my-bridge
+docker run --rm -d --net my-bridge --net-alias my-mongo mongo
+docker run --rm --net my-bridge igops/wait-for-port my-mongo 27017
+echo "MongoDB is up"
+```
+
+#### Using --publish:
+```shell
+#!/bin/sh
+docker run --rm -d -p 27017:27107 mongo
+docker run --rm --add-host="docker-host:host-gateway" igops/wait-for-port docker-host 27017
+echo "MongoDB is up"
 ```
 
 ## ENV variables
