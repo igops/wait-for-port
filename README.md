@@ -2,7 +2,7 @@
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/igops/wait-for-port?logo=docker)](https://hub.docker.com/r/igops/wait-for-port)
 
-A tiny (~3MB) netcat-driven docker image which continuously tries connecting to a specified TCP/IP endpoint. Running it in the foreground allows blocking the execution of some context (e.g., deploy script), unless dependent services are up.
+A tiny (~3MB) netcat-driven docker image which continuously tries connecting to a specified TCP/IP endpoint, and exits when the connection is established. Running it in the foreground allows blocking the execution of some context (e.g., deploy script), unless dependent services are up.
 
 ## Usage
 ```shell
@@ -13,7 +13,7 @@ E.g.,
 ```shell
 $ docker run --rm igops/wait-for-port 172.17.0.1 80
 ```
-will query `172.17.0.1:80` each `0.1s` and exit when the connection is established:
+will query `172.17.0.1:80` each `0.1s`, and exit when the connection is established:
 ```
 Waiting for 172.17.0.1:80...
 OK
